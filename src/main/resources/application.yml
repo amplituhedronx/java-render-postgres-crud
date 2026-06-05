@@ -2,9 +2,6 @@ server:
   port: ${PORT:8080}
 
 spring:
-  datasource:
-    url: jdbc:postgresql://${DATABASE_URL#*//}
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
