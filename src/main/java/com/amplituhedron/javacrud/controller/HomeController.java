@@ -1,5 +1,6 @@
 package com.amplituhedron.javacrud.controller;
 
+import com.amplituhedron.javacrud.dto.HomeResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,10 +10,10 @@ import java.util.Map;
 public class HomeController {
 
     @GetMapping("/")
-    public Map<String, Object> home() {
-        return Map.of(
-            "message", "Simple CRUD API is running! Visit /docs for interactive API documentation.",
-            "endpoints", Map.of(
+    public HomeResponse home() {
+        return new HomeResponse(
+            "Simple CRUD API is running! Visit /docs for interactive API documentation.",
+            Map.of(
                 "add_record", "POST /records/",
                 "list_records", "GET /records/",
                 "get_record", "GET /records/{id}",
