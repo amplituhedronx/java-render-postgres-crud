@@ -1,31 +1,28 @@
-# Multi-stage build for Spring Boot
-FROM eclipse-temurin:21-jdk AS builder
+# === Build Stage ===
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first (for caching)
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+# Copy only pom.xml first (better layer caching)
+COPY pom.xml .
 
 # Download dependencies
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Copy source code
 COPY src ./src
 
 # Build the application
-RUN ./mvnw clean package -DskipTests -B
+RUN mvn clean package -DskipTests -B
 
-# Runtime image
+# === Runtime Stage ===
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Copy the built jar from builder stage
+# Copy the built JAR from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Expose port
 EXPOSE 8080
 
-# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
