@@ -11,12 +11,12 @@ public class HomeController {
     @GetMapping("/")
     public Map<String, Object> home() {
         return Map.of(
-            "message", "Java CRUD API is running",
+            "message", "Simple CRUD API is running! Visit /swagger-ui.html for interactive API documentation.",
             "endpoints", Map.of(
-                "create_record", "POST /records",
-                "list_records", "GET /records",
+                "add_record", "POST /records/",
+                "list_records", "GET /records/",
                 "get_record", "GET /records/{id}",
-                "swagger_ui", "/swagger-ui.html"
+                "health", "GET /health"
             )
         );
     }
