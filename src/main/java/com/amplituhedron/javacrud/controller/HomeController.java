@@ -11,7 +11,7 @@ public class HomeController {
     @GetMapping("/")
     public Map<String, Object> home() {
         return Map.of(
-            "message", "Simple CRUD API is running! Visit /swagger-ui.html for interactive API documentation.",
+            "message", "Simple CRUD API is running! Visit /docs for interactive API documentation.",
             "endpoints", Map.of(
                 "add_record", "POST /records/",
                 "list_records", "GET /records/",
