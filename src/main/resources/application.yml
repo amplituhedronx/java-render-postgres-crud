@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL}
+    url: jdbc:postgresql://${DATABASE_URL#*//}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
