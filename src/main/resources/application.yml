@@ -16,3 +16,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+# SpringDoc OpenAPI - Serve Swagger UI at /docs (like FastAPI)
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /docs
+    operationsSorter: method
