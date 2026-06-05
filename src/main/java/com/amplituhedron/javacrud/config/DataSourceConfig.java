@@ -1,5 +1,6 @@
 package com.amplituhedron.javacrud.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,15 +20,20 @@ public class DataSourceConfig {
     public DataSource dataSource() {
         String jdbcUrl = databaseUrl;
 
-        // Fix Render's postgresql:// format to jdbc:postgresql://
-        if (jdbcUrl != null && jdbcUrl.startsWith("postgresql://")) {
-            jdbcUrl = "jdbc:" + jdbcUrl;
+        // Convert Render's postgresql:// to jdbc:postgresql:// if needed
+        if (jdbcUrl != null) {
+            if (jdbcUrl.startsWith("postgresql://")) {
+                jdbcUrl = "jdbc:" + jdbcUrl;
+            } else if (!jdbcUrl.startsWith("jdbc:postgresql://")) {
+                // Fallback: force correct format
+                jdbcUrl = jdbcUrl.replaceFirst("^jdbc:postgresql://", "jdbc:postgresql://");
+            }
         }
 
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setDriverClassName("org.postgresql.Driver");
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(jdbcUrl);
+        config.setDriverClassName("org.postgresql.Driver");
 
-        return dataSource;
+        return new HikariDataSource(config);
     }
 }
