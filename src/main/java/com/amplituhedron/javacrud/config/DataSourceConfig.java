@@ -18,15 +18,26 @@ public class DataSourceConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
+        if (databaseUrl == null || databaseUrl.isBlank()) {
+            throw new IllegalStateException("DATABASE_URL environment variable is not set");
+        }
+
         String jdbcUrl = databaseUrl;
 
-        // Convert Render's postgresql:// to jdbc:postgresql:// if needed
-        if (jdbcUrl != null) {
-            if (jdbcUrl.startsWith("postgresql://")) {
-                jdbcUrl = "jdbc:" + jdbcUrl;
-            } else if (!jdbcUrl.startsWith("jdbc:postgresql://")) {
-                // Fallback: force correct format
-                jdbcUrl = jdbcUrl.replaceFirst("^jdbc:postgresql://", "jdbc:postgresql://");
+        // Step 1: Ensure it starts with jdbc:postgresql://
+        if (jdbcUrl.startsWith("postgresql://")) {
+            jdbcUrl = "jdbc:" + jdbcUrl;
+        }
+
+        // Step 2: Add port 5432 if missing (common with Render internal URLs)
+        if (jdbcUrl.startsWith("jdbc:postgresql://") && !jdbcUrl.contains(":5432")) {
+            // Insert :5432 after the host
+            int atIndex = jdbcUrl.indexOf("@");
+            if (atIndex > 0) {
+                int slashAfterHost = jdbcUrl.indexOf("/", atIndex);
+                if (slashAfterHost > 0) {
+                    jdbcUrl = jdbcUrl.substring(0, slashAfterHost) + ":5432" + jdbcUrl.substring(slashAfterHost);
+                }
             }
         }
 
